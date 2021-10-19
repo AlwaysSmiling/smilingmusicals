@@ -133,4 +133,4 @@ async def on_ready():
 
 TOKEN = os.environ['Token']
 bot.add_cog(Music(bot))
-bot.run('token')
+bot.run(TOKEN)
