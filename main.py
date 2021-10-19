@@ -1,5 +1,5 @@
 import asyncio
-
+import os
 import discord
 import youtube_dl
 
@@ -66,18 +66,7 @@ class Music(commands.Cog):
         await channel.connect()
 
     @commands.command()
-    async def play(self, ctx, *, query):
-        """Plays a file from the local filesystem"""
-
-        source = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(query))
-        ctx.voice_client.play(source,
-                              after=lambda e: print(f'Player error: {e}')
-                              if e else None)
-
-        await ctx.send(f'Now playing: {query}')
-
-    @commands.command()
-    async def yt(self, ctx, *, url):
+    async def play(self, ctx, *, url):
         """Plays from a url (almost anything youtube_dl supports)"""
 
         async with ctx.typing():
@@ -119,7 +108,6 @@ class Music(commands.Cog):
         await ctx.voice_client.disconnect()
 
     @play.before_invoke
-    @yt.before_invoke
     @stream.before_invoke
     async def ensure_voice(self, ctx):
         if ctx.voice_client is None:
@@ -133,7 +121,7 @@ class Music(commands.Cog):
             ctx.voice_client.stop()
 
 
-bot = commands.Bot(command_prefix=commands.when_mentioned_or("!"),
+bot = commands.Bot(command_prefix=commands.when_mentioned_or("::"),
                    description='Relatively simple music bot example')
 
 
@@ -143,5 +131,6 @@ async def on_ready():
     print('------')
 
 
+TOKEN = os.environ['Token']
 bot.add_cog(Music(bot))
 bot.run('token')
